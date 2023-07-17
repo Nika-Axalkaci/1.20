@@ -1,15 +1,23 @@
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
 
-const Todo = ({onFormSubmit}) => {
-  const [toDo,setToDo] = useState()
+const Todo = ({onFormSubmit , toDo}) => {
+const toDoRef = useRef()
+const toDoTimeRef = useRef()
+
     const onSubmit = (e) =>{
       e.preventDefault()
-      onFormSubmit(toDo)
+      if(toDoRef.current && toDoTimeRef.current){
+        onFormSubmit(toDoRef.current.value , toDoTimeRef.current.value)
+      }else{
+        console.log('fill it');
+      }
     }
   
   return (
     <div><form onSubmit={onSubmit} >
-      <input type="text" placeholder='TODO' onChange={(e) => setToDo(e.target.value)} />
+      <input type="text" placeholder='TODO' ref={toDoRef}
+      defaultValue={toDo} />
+      <input type="date" placeholder='Deadline ' ref={toDoTimeRef}/>
       <button >sumbit</button>
 
     </form>
