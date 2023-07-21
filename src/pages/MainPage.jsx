@@ -1,29 +1,20 @@
 import React from 'react'
-import useFetch from '../hooks/UseFetch'
+
 import { Link } from 'react-router-dom'
-import UseRequest from '../hooks/UseRequest'
 import style from '../styles/main.module.css'
+import { useTodoContext } from '../contexts/TodoContext'
+import { UseLanguageContext, languageOptions } from '../contexts/LanguageProvider'
 const MainPage = () => {
-  const {error,loading,response,resendRequest} = useFetch({url:"/api/v1/todos",method:'GET'})
-  const {sendRequest} = UseRequest({method:"DELETE"})
-  const toDoList = response?.items.map(todo =>{
-   return{
-      toDoTime: todo.toDoTime,
-     toDo: todo.toDo,
-       id: todo._uuid
- }
-  }) || []
-  const onDelete = (todoId)=>{
-    sendRequest(null , `/api/v1/todos/${todoId}`)
-    .then(()=>resendRequest())
-  }
-  if(loading) return <p>loading. . .</p>
-  if (error) return <p>error</p>
+  const{language} = UseLanguageContext()
+  const {toDoList , dataLoading,deleteLoading , onDelete} = useTodoContext()
+  if(dataLoading||deleteLoading) return <p>loading. . .</p>
+  
   return (
  <div className={style.todoDiv}>
   <div className={style.createDiv}>
   <Link className={style.create}  to={'/create'}>CREATE</Link>
   </div>
+        <h1>{languageOptions[language]}</h1>
     <div className={style.card}>
     {toDoList.map((todo)=> <div className={style.todo} key={todo.id}>
         <h3>TODO: {todo.toDo}</h3>
@@ -32,7 +23,6 @@ const MainPage = () => {
         <button onClick={()=>onDelete(todo.id)}>DELETE</button>
       </div>      
     )}
-
     </div>
   </div>
   )
